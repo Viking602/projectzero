@@ -5,9 +5,9 @@
 
 1. [Gin](https://github.com/gin-gonic/gin): 轻量级Web框架
 2. [entgo](https://github.com/ent/ent): 数据库ORM组件
-3. [Golang-JWT](github.com/golang-jwt/jwt): Golang JWT模块
-5. [godotenv](https://github.com/joho/godotenv): 使用本地env提供配置
-6. [zap](https://github.com/uber-go/zap): uber开源的json日志库
+3. [Golang-JWT](https://github.com/golang-jwt/jwt): Golang JWT模块
+4. [godotenv](https://github.com/joho/godotenv): 使用本地env提供配置
+5. [zap](https://github.com/uber-go/zap): uber开源的json日志库
 
 
 当前已实现接口
