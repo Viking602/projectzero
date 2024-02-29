@@ -23,4 +23,5 @@ MySQL数据表将会在启动项目时自动创建
 
 ## 参考项目
 [Singo](https://github.com/gourouting/singo): Gin+Gorm开发Golang API快速开发脚手架
+
 [go-zero](https://github.com/zeromicro/go-zero): 具有CLI工具的云原生GO微服务框架
