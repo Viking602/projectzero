@@ -4,7 +4,6 @@ import (
 	"context"
 	"entgo.io/ent/dialect/sql"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/joho/godotenv"
 	"log"
 	"os"
 	"projectzero/ent"
@@ -13,7 +12,6 @@ import (
 )
 
 func Database() *ent.Client {
-	godotenv.Load()
 	c, err := sql.Open("mysql", os.Getenv("MYSQL_DSN"))
 	if err != nil {
 		log.Fatalf("failed opening connection to mysql: %v", err)

@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -16,7 +17,7 @@ type Claims struct {
 	jwt.StandardClaims
 }
 
-var MySecret = []byte("xJ0Egkd5ac5zGGXS")
+var MySecret = []byte(os.Getenv("JWT_SECRET"))
 
 const TokenExpireDuration = time.Hour * 2
 
