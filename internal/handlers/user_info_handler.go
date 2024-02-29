@@ -8,21 +8,21 @@ import (
 	"projectzero/pkg/response"
 )
 
-type UserLoginHandlers struct {
-	logic *logic.UserLoginLogic
+type UserInfoHandler struct {
+	logic *logic.UserInfoLogic
 }
 
-func NewUserLoginHandlers(l *logic.UserLoginLogic) *UserLoginHandlers {
-	return &UserLoginHandlers{
+func NewUserInfoHandler(l *logic.UserInfoLogic) *UserInfoHandler {
+	return &UserInfoHandler{
 		logic: l,
 	}
 }
 
-func (l *UserLoginHandlers) UserLogin(c *gin.Context) {
-	var req types.UserRegister
+func (l *UserInfoHandler) UserInfo(c *gin.Context) {
+	var req types.UserInfoRequest
 
 	if err := c.ShouldBind(&req); err == nil {
-		res := l.logic.Login(&req)
+		res := l.logic.Info(&req)
 		c.JSON(http.StatusOK, res)
 	} else {
 		c.JSON(http.StatusOK, response.ErrorResponse(err))
