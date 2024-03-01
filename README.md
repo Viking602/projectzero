@@ -6,7 +6,7 @@
 1. [Gin](https://github.com/gin-gonic/gin): 轻量级Web框架
 2. [entgo](https://github.com/ent/ent): 数据库ORM组件
 3. [Golang-JWT](https://github.com/golang-jwt/jwt): Golang JWT模块
-4. [godotenv](https://github.com/joho/godotenv): 使用本地env提供配置
+4. [viper](https://github.com/spf13/viper): 使用viper为项目提供配置文件支持
 5. [zap](https://github.com/uber-go/zap): uber开源的json日志库
 
 
@@ -15,9 +15,6 @@
 2. ```/api/v1/user/login```用户登录
 3. ```/api/v1/user/info```用户信息
 4. ```/api/v1/user/update```更新信息
-
-修改配置方法
-将.env.example重命名为.env并修改其中配置
 
 MySQL数据表将会在启动项目时自动创建
 
