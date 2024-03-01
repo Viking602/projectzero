@@ -3,30 +3,28 @@ package logic
 import (
 	"context"
 	"go.uber.org/zap"
-	"projectzero/ent"
 	"projectzero/ent/user"
 	"projectzero/internal/middleware"
+	"projectzero/internal/svc"
 	"projectzero/internal/types"
 	"projectzero/pkg/response"
 	"projectzero/utils"
 )
 
 type UserLoginLogic struct {
-	client *ent.Client
-	logger *zap.Logger
+	svc *svc.Service
 }
 
-func NewUserLoginLogic(client *ent.Client, logger *zap.Logger) *UserLoginLogic {
+func NewUserLoginLogic(svc *svc.Service) *UserLoginLogic {
 	return &UserLoginLogic{
-		client: client,
-		logger: logger,
+		svc: svc,
 	}
 }
 
 func (l *UserLoginLogic) Login(req *types.UserRegister) response.Response {
-	userInfo, err := l.client.User.Query().Where(user.UserName(req.UserName)).First(context.Background())
+	userInfo, err := l.svc.Client.User.Query().Where(user.UserName(req.UserName)).First(context.Background())
 	if err != nil {
-		l.logger.Error("查询用户失败", zap.Error(err))
+		l.svc.Logger.Error("查询用户失败", zap.Error(err))
 		return response.ParamErr("用户名或密码错误", err)
 	}
 
@@ -38,9 +36,9 @@ func (l *UserLoginLogic) Login(req *types.UserRegister) response.Response {
 		return response.ParamErr("用户名或密码错误", err)
 	}
 
-	token, err := middleware.GenToken(req.UserName, userInfo.Password)
+	token, err := middleware.GenToken(req.UserName, userInfo.Password, l.svc.Conf.JWT.Secret)
 	if err != nil {
-		l.logger.Error("生成token失败", zap.Error(err))
+		l.svc.Logger.Error("生成token失败", zap.Error(err))
 		return response.ParamErr("登录失败", err)
 	}
 

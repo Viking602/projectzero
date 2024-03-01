@@ -1,3 +1,4 @@
 /.env
 /go.sum
 /.idea
+/etc/config.yaml

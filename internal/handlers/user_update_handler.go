@@ -22,7 +22,8 @@ func (l *UserUpdateHandler) UserUpdate(c *gin.Context) {
 	var req types.UserUpdateRequest
 
 	if err := c.ShouldBind(&req); err == nil {
-		res := l.logic.Update(&req)
+		user, _ := c.Get("username")
+		res := l.logic.Update(user, &req)
 		c.JSON(http.StatusOK, res)
 	} else {
 		c.JSON(http.StatusOK, response.ErrorResponse(err))

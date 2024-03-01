@@ -3,28 +3,26 @@ package logic
 import (
 	"context"
 	"go.uber.org/zap"
-	"projectzero/ent"
 	"projectzero/ent/user"
+	"projectzero/internal/svc"
 	"projectzero/internal/types"
 	"projectzero/pkg/response"
 )
 
 type UserInfoLogic struct {
-	client *ent.Client
-	logger *zap.Logger
+	svc *svc.Service
 }
 
-func NewUserInfoLogic(client *ent.Client, logger *zap.Logger) *UserInfoLogic {
+func NewUserInfoLogic(svc *svc.Service) *UserInfoLogic {
 	return &UserInfoLogic{
-		client: client,
-		logger: logger,
+		svc: svc,
 	}
 }
 
 func (l *UserInfoLogic) Info(req *types.UserInfoRequest) response.Response {
-	userInfo, err := l.client.User.Query().Where(user.UserName(req.UserName)).First(context.Background())
+	userInfo, err := l.svc.Client.User.Query().Where(user.UserName(req.UserName)).First(context.Background())
 	if err != nil {
-		l.logger.Error("查询用户失败", zap.Error(err))
+		l.svc.Logger.Error("查询用户失败", zap.Error(err))
 		return response.ParamErr("查询用户失败", err)
 	}
 

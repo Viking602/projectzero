@@ -1,0 +1,6 @@
+port: 3000
+env: debug
+jwt:
+  secret: bHVaUeI1Y8Pb1CWy
+mysql:
+  dsn: root:123456@tcp(172.21.6.42:3306)/test_db

@@ -1,7 +1,5 @@
 package errorx
 
-import "errors"
-
 // 五位数错误编码为应用自定义错误
 // 50XXX的五位数错误编码为服务器端错误
 // 40XXX的五位数错误编码为客户端错误
@@ -23,5 +21,3 @@ const (
 	// CodeTokenExpire token过期
 	CodeTokenExpire = 40003
 )
-
-var ErrMissingParameter = errors.New("missing parameter")

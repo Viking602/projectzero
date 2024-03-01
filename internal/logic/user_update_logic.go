@@ -3,8 +3,8 @@ package logic
 import (
 	"context"
 	"go.uber.org/zap"
-	"projectzero/ent"
 	"projectzero/ent/user"
+	"projectzero/internal/svc"
 	"projectzero/internal/types"
 	"projectzero/pkg/response"
 	"projectzero/utils"
@@ -12,26 +12,27 @@ import (
 )
 
 type UserUpdateLogic struct {
-	client *ent.Client
-	logger *zap.Logger
+	svc *svc.Service
 }
 
-func NewUserUpdateLogic(client *ent.Client, logger *zap.Logger) *UserUpdateLogic {
+func NewUserUpdateLogic(svc *svc.Service) *UserUpdateLogic {
 	return &UserUpdateLogic{
-		client: client,
-		logger: logger,
+		svc: svc,
 	}
 }
 
-func (l *UserUpdateLogic) Update(req *types.UserUpdateRequest) response.Response {
+func (l *UserUpdateLogic) Update(username any, req *types.UserUpdateRequest) response.Response {
+	if username == "" || username != req.UserName {
+		return response.ParamErr("非法操作", nil)
+	}
 	// 获取请求用户信息
 	nickname := req.NickName
 	password := req.Password
 	userType := req.UserType
 	// 查询用户基础信息
-	userInfo, err := l.client.User.Query().Where(user.UserName(req.UserName)).First(context.Background())
+	userInfo, err := l.svc.Client.User.Query().Where(user.UserName(req.UserName)).First(context.Background())
 	if err != nil {
-		l.logger.Error("查询用户失败", zap.Error(err))
+		l.svc.Logger.Error("查询用户失败", zap.Error(err))
 		return response.ParamErr("查询用户失败", err)
 	}
 	// 为空则不修改
@@ -46,7 +47,7 @@ func (l *UserUpdateLogic) Update(req *types.UserUpdateRequest) response.Response
 		// 如果不为空则加密密码
 		hashPassword, err := utils.HashPassword(req.Password)
 		if err != nil {
-			l.logger.Error("密码加密失败", zap.Error(err))
+			l.svc.Logger.Error("密码加密失败", zap.Error(err))
 			return response.ParamErr("修改密码失败", err)
 		}
 		password = hashPassword
@@ -55,13 +56,13 @@ func (l *UserUpdateLogic) Update(req *types.UserUpdateRequest) response.Response
 		userType = userInfo.UserType
 	}
 
-	_, err = l.client.User.Update().Where(user.UserName(req.UserName)).
+	_, err = l.svc.Client.User.Update().Where(user.UserName(req.UserName)).
 		SetNickName(req.NickName).
 		SetPassword(password).
 		SetUpdateAt(time.Now().Unix()).
 		Save(context.Background())
 	if err != nil {
-		l.logger.Error("更新用户信息失败", zap.Error(err))
+		l.svc.Logger.Error("更新用户信息失败", zap.Error(err))
 		return response.ParamErr("更新用户信息失败", err)
 	}
 

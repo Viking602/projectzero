@@ -1,12 +1,10 @@
 package middleware
 
-// 实现一个GIN-JWT中间件
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 )
@@ -17,12 +15,10 @@ type Claims struct {
 	jwt.StandardClaims
 }
 
-var MySecret = []byte(os.Getenv("JWT_SECRET"))
-
 const TokenExpireDuration = time.Hour * 2
 
 // JWTAuthMiddleware 基于JWT的认证中间件
-func JWTAuthMiddleware() func(c *gin.Context) {
+func JWTAuthMiddleware(jwtSecret string) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		// 客户端携带Token有三种方式 1.放在请求头 2.放在请求体 3.放在URI
 		// 这里假设Token放在Header的Authorization中，并使用Bearer开头
@@ -47,7 +43,7 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 			return
 		}
 		// parts[1]是获取到的tokenString，我们使用之前定义好的解析JWT的函数来解析它
-		mc, err := ParseToken(parts[1])
+		mc, err := ParseToken(parts[1], jwtSecret)
 		if err != nil {
 			c.JSON(http.StatusOK, gin.H{
 				"code": http.StatusUnauthorized,
@@ -63,10 +59,10 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 }
 
 // ParseToken 解析JWT
-func ParseToken(tokenString string) (*Claims, error) {
+func ParseToken(tokenString string, jwtSecret string) (*Claims, error) {
 	// 解析token
 	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (i interface{}, err error) {
-		return MySecret, nil
+		return []byte(jwtSecret), nil
 	})
 	if err != nil {
 		return nil, err
@@ -78,7 +74,7 @@ func ParseToken(tokenString string) (*Claims, error) {
 }
 
 // GenToken 生成JWT
-func GenToken(username string, password string) (string, error) {
+func GenToken(username string, password string, jwtSecret string) (string, error) {
 	// 创建一个我们自己的声明
 	c := Claims{
 		username, // 自定义字段
@@ -91,5 +87,5 @@ func GenToken(username string, password string) (string, error) {
 	// 使用指定的签名方法创建签名对象
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, c)
 	// 使用指定的secret签名并获得完整的编码后的字符串token
-	return token.SignedString(MySecret)
+	return token.SignedString([]byte(jwtSecret))
 }

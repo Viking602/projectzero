@@ -1,28 +1,24 @@
 package svc
 
 import (
-	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+	"projectzero/conf"
 	"projectzero/db"
-	"projectzero/internal/router"
+	"projectzero/ent"
 )
 
 type Service struct {
-	r      *gin.Engine
-	logger *zap.Logger
+	Logger *zap.Logger
+	Conf   *conf.Conf
+	Client *ent.Client
 }
 
-func NewServices(logger *zap.Logger) *Service {
-	client := db.Database()
-	r := router.NewRouter(logger, client)
+func NewServices(logger *zap.Logger, c *conf.Conf) *Service {
+	client := db.Database(c.MySql.DSN)
 	return &Service{
-		r:      r,
-		logger: logger,
+		Logger: logger,
+		Conf:   c,
+		Client: client,
 	}
 
-}
-
-func (s Service) Run() error {
-	err := s.r.Run(":3000")
-	return err
 }

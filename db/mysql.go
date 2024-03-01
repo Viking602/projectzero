@@ -5,14 +5,13 @@ import (
 	"entgo.io/ent/dialect/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
-	"os"
 	"projectzero/ent"
 	"projectzero/ent/migrate"
 	"time"
 )
 
-func Database() *ent.Client {
-	c, err := sql.Open("mysql", os.Getenv("MYSQL_DSN"))
+func Database(dsn string) *ent.Client {
+	c, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatalf("failed opening connection to mysql: %v", err)
 	}
